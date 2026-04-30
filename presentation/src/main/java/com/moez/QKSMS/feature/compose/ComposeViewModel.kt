@@ -154,9 +154,13 @@ class ComposeViewModel @Inject constructor(
         if (sharedScheduledDateTime != 0L)
             newState { copy (scheduled = sharedScheduledDateTime) }
 
-        // set shared sendAsGroup into state if set
-        if (sharedSendAsGroup != null)
-            newState { copy(sendAsGroup = sharedSendAsGroup) }
+        newState { copy(sendAsGroup = sharedSendAsGroup ?: prefs.sendAsGroup.get()) }
+
+        if (sharedSendAsGroup == null) {
+            disposables += prefs.sendAsGroup.asObservable()
+                .distinctUntilChanged()
+                .subscribe { sendAsGroup -> newState { copy(sendAsGroup = sendAsGroup) } }
+        }
 
         // set shared attachments into state
         newState { copy(attachments = sharedAttachments) }
@@ -208,13 +212,6 @@ class ComposeViewModel @Inject constructor(
                 .skipUntil(state.filter { state -> state.editingMode })
                 .takeUntil(state.filter { state -> !state.editingMode })
                 .subscribe(selectedChips::onNext)
-
-        // update state sendAsGroup when conversation sendAsGroup value changes
-        disposables += conversation
-            .map { conversation -> conversation.sendAsGroup }
-            .distinctUntilChanged()
-            .doOnNext { sendAsGroup -> newState { copy(sendAsGroup = sendAsGroup) } }
-            .subscribe()
 
         // update recipient count whenever conversation changes
         disposables += conversation
@@ -616,15 +613,6 @@ class ComposeViewModel @Inject constructor(
                         menuInfo.viewHolderValue.type
                     )
             }
-
-        // toggle the group sending mode and update the conversation saved value
-        view.sendAsGroupIntent
-            .observeOn(Schedulers.io())
-            .withLatestFrom(conversation, state) { _, conversation, state ->
-                conversationRepo.updateSendAsGroup(conversation.id, !state.sendAsGroup)
-            }
-            .autoDisposable(view.scope())
-            .subscribe()
 
         // Scroll to search position
         searchSelection
@@ -1204,7 +1192,7 @@ class ComposeViewModel @Inject constructor(
                     true -> conversation.recipients.map { it.address }
                     false -> chips.map { chip -> chip.address }
                 }
-                val sendAsGroup = ((addresses.size > 1) && state.sendAsGroup)
+                val sendAsGroup = addresses.size > 1 && (sharedSendAsGroup ?: prefs.sendAsGroup.get())
 
                 var scheduled = false
 

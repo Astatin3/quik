@@ -34,6 +34,7 @@ import dev.octoshrimpy.quik.model.Message
 import dev.octoshrimpy.quik.repository.ConversationRepository
 import dev.octoshrimpy.quik.repository.MessageRepository
 import dev.octoshrimpy.quik.util.ActiveSubscriptionObservable
+import dev.octoshrimpy.quik.util.Preferences
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.withLatestFrom
@@ -52,6 +53,7 @@ class QkReplyViewModel @Inject constructor(
     private val markRead: MarkRead,
     private val messageRepo: MessageRepository,
     private val navigator: Navigator,
+    private val prefs: Preferences,
     private val sendNewMessage: SendNewMessage,
     private val subscriptionManager: SubscriptionManagerCompat
 ) : QkViewModel<QkReplyView, QkReplyState>(QkReplyState(threadId = threadId)) {
@@ -215,9 +217,10 @@ class QkReplyViewModel @Inject constructor(
                 .withLatestFrom(view.textChangedIntent) { _, body -> body }
                 .map { body -> body.toString() }
                 .withLatestFrom(state, conversation) { body, state, conversation ->
+                    val addresses = conversation.recipients.map { it.address }
                     sendNewMessage.execute(SendNewMessage.Params(
                         state.subscription?.subscriptionId ?: -1, 0,
-                        conversation.recipients.map { it.address }, body, conversation.sendAsGroup
+                        addresses, body, addresses.size > 1 && prefs.sendAsGroup.get()
                     ))
                     view.setDraft("")
                 }

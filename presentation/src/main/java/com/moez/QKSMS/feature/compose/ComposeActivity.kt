@@ -113,7 +113,6 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
     override val optionsItemIntent: Subject<Int> = PublishSubject.create()
     override val contextItemIntent: Subject<MenuItem> = PublishSubject.create()
     override val scheduleAction: Subject<Boolean> = PublishSubject.create()
-    override val sendAsGroupIntent by lazy { binding.sendAsGroupSwitch.clicks() }
     override val messagePartClickIntent: Subject<Long> by lazy { messageAdapter.partClicks }
     override val messagePartContextMenuRegistrar: Subject<View> by lazy { messageAdapter.partContextMenuRegistrar }
     override val messagesSelectedIntent by lazy { messageAdapter.selectionChanges }
@@ -445,13 +444,6 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         chipsAdapter.data = state.selectedChips
 
         binding.loading.setVisible(state.loading)
-
-        binding.sendAsGroup.setVisible(state.recipientCount > 1)
-        binding.sendAsGroupSwitch.isChecked = state.sendAsGroup
-        binding.sendAsGroupSummary.setText(
-            if (binding.sendAsGroupSwitch.isChecked) R.string.compose_send_group_summary_on
-            else R.string.compose_send_group_summary_off
-        )
 
         binding.messageList.setVisible(!state.editingMode || state.sendAsGroup || state.selectedChips.size == 1)
         messageAdapter.data = state.messages

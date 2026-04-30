@@ -24,11 +24,11 @@ import android.net.Uri
 import android.telephony.TelephonyManager
 import dagger.android.AndroidInjection
 import dev.octoshrimpy.quik.interactor.SendNewMessage
-import dev.octoshrimpy.quik.repository.ConversationRepository
+import dev.octoshrimpy.quik.util.Preferences
 import javax.inject.Inject
 
 class HeadlessSmsSendService : IntentService("HeadlessSmsSendService") {
-    @Inject lateinit var conversationRepo: ConversationRepository
+    @Inject lateinit var prefs: Preferences
     @Inject lateinit var sendNewMessage: SendNewMessage
 
     override fun onHandleIntent(intent: Intent?) {
@@ -38,10 +38,8 @@ class HeadlessSmsSendService : IntentService("HeadlessSmsSendService") {
         intent.extras?.getString(Intent.EXTRA_TEXT)?.takeIf { it.isNotBlank() }?.let { body ->
             val recipients = intent.data?.let(::getRecipients)?.split(";") ?: return@let
 
-            val conversation = conversationRepo.getOrCreateConversation(recipients)
-
             sendNewMessage.execute(SendNewMessage.Params(
-                -1, 0, recipients, body, conversation?.sendAsGroup ?: false
+                -1, 0, recipients, body, recipients.size > 1 && prefs.sendAsGroup.get()
             ))
         }
     }

@@ -46,6 +46,7 @@ data class SettingsState(
     val stripUnicodeEnabled: Boolean = false,
     val mobileOnly: Boolean = false,
     val longAsMms: Boolean = false,
+    val sendAsGroupEnabled: Boolean = true,
     val maxMmsSizeSummary: String = "100KB",
     val maxMmsSizeId: Int = 100,
     val messageLinkHandlingSummary: String = "Ask before opening",

@@ -28,12 +28,14 @@ import dev.octoshrimpy.quik.interactor.MarkRead
 import dev.octoshrimpy.quik.interactor.SendNewMessage
 import dev.octoshrimpy.quik.repository.ConversationRepository
 import dev.octoshrimpy.quik.repository.MessageRepository
+import dev.octoshrimpy.quik.util.Preferences
 import javax.inject.Inject
 
 class RemoteMessagingReceiver : BroadcastReceiver() {
     @Inject lateinit var conversationRepo: ConversationRepository
     @Inject lateinit var markRead: MarkRead
     @Inject lateinit var messageRepo: MessageRepository
+    @Inject lateinit var prefs: Preferences
     @Inject lateinit var sendNewMessage: SendNewMessage
     @Inject lateinit var subscriptionManager: SubscriptionManagerCompat
 
@@ -49,6 +51,7 @@ class RemoteMessagingReceiver : BroadcastReceiver() {
 
         val lastMessage = messageRepo.getMessages(threadId).lastOrNull()
         val conversation = conversationRepo.getConversation(threadId)
+        val addresses = conversation?.recipients?.map { it.address } ?: return
 
         val pendingRepository = goAsync()
         sendNewMessage.execute(
@@ -57,9 +60,9 @@ class RemoteMessagingReceiver : BroadcastReceiver() {
                     .firstOrNull { it.subscriptionId == lastMessage?.subId }
                     ?.subscriptionId ?: -1,
                 0,
-                conversation?.recipients?.map { it.address } ?: return,
+                addresses,
                 remoteInput.getCharSequence("body").toString(),
-                conversation.sendAsGroup
+                addresses.size > 1 && prefs.sendAsGroup.get()
             )
         ) { pendingRepository.finish() }
     }

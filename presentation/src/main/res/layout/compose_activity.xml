@@ -37,7 +37,7 @@
         android:padding="8dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sendAsGroupBackground"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:visibility="visible">
 
         <ImageView
@@ -72,7 +72,7 @@
         app:layout_constraintBottom_toTopOf="@id/messageBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sendAsGroupBackground"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:stackFromEnd="true"
         tools:listitem="@layout/message_list_item_in" />
 
@@ -87,7 +87,7 @@
         android:text="@string/compose_messages_empty"
         android:textColor="?android:attr/textColorTertiary"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/sendAsGroupBackground"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:textSize="secondary" />
 
     <ProgressBar
@@ -102,67 +102,6 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:progress="45"
         tools:progressTint="@color/tools_theme" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/sendAsGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="sendAsGroupBackground,sendAsGroupTitle,sendAsGroupSummary,sendAsGroupSwitch,sendAsGroupShadow"
-        tools:visibility="visible" />
-
-    <View
-        android:id="@+id/sendAsGroupBackground"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="?attr/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="@id/sendAsGroupSummary"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
-    <dev.octoshrimpy.quik.common.widget.QkTextView
-        android:id="@+id/sendAsGroupTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/compose_send_group_title"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/sendAsGroupSwitch"
-        app:layout_constraintStart_toStartOf="@id/sendAsGroupBackground"
-        app:layout_constraintTop_toTopOf="@id/sendAsGroupBackground"
-        app:textSize="primary" />
-
-    <dev.octoshrimpy.quik.common.widget.QkTextView
-        android:id="@+id/sendAsGroupSummary"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:text="@string/compose_send_group_summary_on"
-        android:textColor="?android:attr/textColorTertiary"
-        app:layout_constraintEnd_toEndOf="@id/sendAsGroupTitle"
-        app:layout_constraintStart_toStartOf="@id/sendAsGroupTitle"
-        app:layout_constraintTop_toBottomOf="@id/sendAsGroupTitle"
-        app:textSize="secondary" />
-
-    <dev.octoshrimpy.quik.common.widget.QkSwitch
-        android:id="@+id/sendAsGroupSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:checked="true"
-        android:clickable="false"
-        app:layout_constraintBottom_toBottomOf="@id/sendAsGroupBackground"
-        app:layout_constraintEnd_toEndOf="@id/sendAsGroupBackground"
-        app:layout_constraintTop_toTopOf="@id/sendAsGroupBackground" />
-
-    <View
-        android:id="@+id/sendAsGroupShadow"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:background="@drawable/ab_shadow"
-        app:layout_constraintTop_toBottomOf="@id/sendAsGroupBackground" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/composeBar"
@@ -698,8 +637,7 @@
             android:id="@+id/audioMsgBackgroundShadow"
             android:layout_width="match_parent"
             android:layout_height="8dp"
-            android:background="@drawable/ab_shadow"
-            app:layout_constraintTop_toBottomOf="@id/sendAsGroupBackground" />
+            android:background="@drawable/ab_shadow" />
 
         <LinearLayout
             android:id="@+id/audioMsgPlayerBackground"
